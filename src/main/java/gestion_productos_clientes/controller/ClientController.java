@@ -3,15 +3,18 @@ package gestion_productos_clientes.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import gestion_productos_clientes.exceptions.ResourceNotFoundExceptions;
 import gestion_productos_clientes.model.Client;
+import gestion_productos_clientes.model.Product;
 import gestion_productos_clientes.repository.ClientRepository;
 
 @RestController
@@ -33,4 +36,26 @@ public class ClientController {
 		public Client crearCliente(@RequestBody Client client) {
 			return repository.save(client);
 		}
+	
+	//Método para buscar cliente por id
+	@GetMapping("/clients/{id}")
+	public ResponseEntity<Client> obtenerClientePorId(@PathVariable Long id){
+		Client client = repository.findById(id).orElseThrow(() -> new ResourceNotFoundExceptions("No exite el cliente con el id:" + id));
+		return ResponseEntity.ok(client);
+	}
+	
+	//Método para actualizar un cliente por id
+	@GetMapping("/clients/{id}")
+	public ResponseEntity<Client> actualizarClientePorId(@PathVariable Long id, @RequestBody Client detailClient){
+		Client client = repository.findById(id).orElseThrow(() -> new ResourceNotFoundExceptions("No exite el cliente con el id:" + id));
+		
+		client.setName(detailClient.getName());
+		client.setLastName(detailClient.getLastName());
+		client.setEmail(detailClient.getEmail());
+		client.setPhone(detailClient.getPhone());
+		
+		Client clienttUpdate = repository.save(client);
+		
+		return ResponseEntity.ok(client);
+	}
 }
