@@ -1,13 +1,17 @@
 package gestion_productos_clientes.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,7 +49,7 @@ public class ClientController {
 	}
 	
 	//Método para actualizar un cliente por id
-	@GetMapping("/clients/{id}")
+	@PutMapping("/clients/{id}")
 	public ResponseEntity<Client> actualizarClientePorId(@PathVariable Long id, @RequestBody Client detailClient){
 		Client client = repository.findById(id).orElseThrow(() -> new ResourceNotFoundExceptions("No exite el cliente con el id:" + id));
 		
@@ -58,4 +62,17 @@ public class ClientController {
 		
 		return ResponseEntity.ok(client);
 	}
+	
+	
+	//este metodo sirve para eliminar un cliente
+    @DeleteMapping("/clients/{id}")
+    public ResponseEntity<Map<String,Boolean>> eliminarEmpleado(@PathVariable Long id){
+        Client client = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundExceptions("No existe el cliente con el ID : " + id));
+
+        repository.delete(client);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("eliminar",Boolean.TRUE);
+        return ResponseEntity.ok(response);
+    }
 }
